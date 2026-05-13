@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(mvn --version)",
+      "Bash(java *)",
+      "Bash(D:/WorkSoftware/Java/JDK17/bin/java *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/doc.html)",
+      "Bash(netstat -ano)",
+      "Bash(tasklist)",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(mvn spring-boot:run)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/uploads/2026/05/08/c750f4f35d33421fb69c26d63b98c503.png)",
+      "Read(//c/Program Files/**)",
+      "Read(//c/Program Files/Microsoft//**)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/api/auth/login)",
+      "Bash(chcp 65001)",
+      "Bash(iconv *)"
+    ]
+  }
+}

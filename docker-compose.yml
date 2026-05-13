@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: pounds-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-123456}
+    # 生产环境：不暴露 3306 端口到公网，只在内部网络访问
+    # 如需本地调试数据库，取消下面注释
+    # ports:
+    #   - "127.0.0.1:3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./pounds-dream-server/src/main/resources/db:/docker-entrypoint-initdb.d
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --innodb-buffer-pool-size=256M
+      --max-connections=200
+      --slow-query-log=ON
+      --long-query-time=2
+    networks:
+      - pounds-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-123456}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  server:
+    build:
+      context: .
+      dockerfile: pounds-dream-server/Dockerfile
+    container_name: pounds-server
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/pounds_dream?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD:-123456}
+      JWT_SECRET: ${JWT_SECRET:-poundsdream2026secretkeyforjwttokenpleasechangeinproduction}
+      AI_API_KEY: ${AI_API_KEY:-}
+      AI_BASE_URL: ${AI_BASE_URL:-}
+      AI_MODEL: ${AI_MODEL:-}
+      JAVA_OPTS: "-Xms256m -Xmx512m"
+    # 生产环境：不暴露 8080 端口，通过 Nginx 代理访问
+    # 如需直接访问 API 文档，取消下面注释
+    # ports:
+    #   - "127.0.0.1:8080:8080"
+    volumes:
+      - uploads-data:/app/uploads
+    networks:
+      - pounds-net
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+
+  web:
+    build:
+      context: ./pounds-dream-web
+      dockerfile: Dockerfile
+    container_name: pounds-web
+    restart: unless-stopped
+    depends_on:
+      - server
+    ports:
+      - "80:80"
+      # 如需 HTTPS，取消下面注释并配置证书
+      # - "443:443"
+    volumes:
+      # 挂载上传文件目录，让 Nginx 直接代理静态文件
+      - uploads-data:/usr/share/nginx/html/uploads:ro
+      # HTTPS 证书目录（如需 HTTPS）
+      # - ./certs:/etc/nginx/certs:ro
+    networks:
+      - pounds-net
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+volumes:
+  mysql-data:
+  uploads-data:
+
+networks:
+  pounds-net:
+    driver: bridge

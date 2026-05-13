@@ -1,0 +1,42 @@
+
+仪表盘当前使用 ECharts 折线图展示体重趋势，风格偏冷冰冰。需要用 Three.js 3D 人体模型替代，根据用户的身体数据（BMI、体重、围度）动态展示体型变化，打造精品体验。
+
+项目定位：女性向，紫色+粉色柔美配色。
+
+asks (2 done, 1 in progress, 1 open)
+装 three.js 依赖
+建 BodyAvatar3D 组件
+成 3D 组件到 Dashboard › blocked by #2
+端 Dashboard API 扩展
+  └── getBodyMeasurements() → 围度历史（备用）
+        ↓
+  <BodyAvatar3D
+    :bmi="dashboard.bmi"
+    :weight="dashboard.todayWeight"
+    :height="dashboard.height"
+    :chest="dashboard.chest"
+    :waist="dashboard.waist"
+    :hip="dashboard.hip"
+    ...
+  />
+        ↓
+  Three.js 渲染参数化女性人体模型
+
+---
+视觉风格
+
+- 材质：MeshToonMaterial，2-3 色阶卡通着色
+- 配色：肤色（温暖粉白）+ 渐变紫色环境光
+- 背景：透明（alpha: true），融入卡片白色背景
+- 地面：粉色圆形阴影（CircleGeometry + 半透明材质）
+- 灯光：柔和的环境光 + 侧面方向光，营造立
+
+---
+验证方式
+
+1. 安装 three 后 npm run dev 确认启动正常
+2. 登录后进入仪表盘，确认 3D 模型正常渲染
+3. 测试有/无围度数据两种场景（无围度时用 BMI 推算）
+4. 测试变形动画平滑性（修改体重后观察过渡）
+5. 测试组件销毁（切换页面再切回）无内存泄漏
+6. 测试窗口 resize 后 3D 渲染区自适应

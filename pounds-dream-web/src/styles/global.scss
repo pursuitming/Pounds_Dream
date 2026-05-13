@@ -1,0 +1,43 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #app {
+  height: 100%;
+  width: 100%;
+}
+
+:root {
+  --primary-color: #ff6b9d;
+  --success-color: #9b7fe6;
+  --warning-color: #ffb347;
+  --danger-color: #ff6b8a;
+  --info-color: #b8a9c9;
+  --bg-color: #fef6f9;
+  --card-bg: #ffffff;
+  --text-primary: #3d2b4a;
+  --text-regular: #6b5a7a;
+  --text-secondary: #9b8aad;
+  --border-color: #edd6e6;
+}
+
+.page-container {
+  padding: 20px;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+}
