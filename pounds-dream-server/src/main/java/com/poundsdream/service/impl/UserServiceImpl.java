@@ -53,8 +53,9 @@ public class UserServiceImpl implements UserService {
         if (dto.getTargetWeight() != null) user.setTargetWeight(dto.getTargetWeight());
         if (dto.getTargetCalorie() != null) user.setTargetCalorie(dto.getTargetCalorie());
         if (dto.getActivityLevel() != null) user.setActivityLevel(dto.getActivityLevel());
-        if (dto.getPhone() != null) user.setPhone(dto.getPhone());
-        if (dto.getEmail() != null) user.setEmail(dto.getEmail());
+        // 手机号和邮箱：空字符串转为 null，避免唯一约束冲突
+        if (dto.getPhone() != null) user.setPhone(dto.getPhone().isEmpty() ? null : dto.getPhone());
+        if (dto.getEmail() != null) user.setEmail(dto.getEmail().isEmpty() ? null : dto.getEmail());
 
         userMapper.updateById(user);
 
